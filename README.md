@@ -1,1 +1,74 @@
-# intern-line-bot
+# 前提
+- [Heroku](https://jp.heroku.com/) のアカウントを取得済みであること。
+- Herokuの[CLIツール](https://devcenter.heroku.com/articles/getting-started-with-ruby#set-up)がインストール済みであること。
+- [LINE Developer](https://developers.line.me/ja/) 登録が完了し、プロバイダー・channelの作成が完了していること。
+
+# 環境
+```
+$ ruby -v
+ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-darwin16]
+
+$ bundle exec rails -v
+Rails 5.1.4
+```
+
+# Webhook環境の構築
+1. リポジトリをクローンする。
+```
+git clone git@github.com:giftee/intern-line-bot.git
+```
+
+2. Herokuにログインする。
+```
+$ heroku login
+Enter your Heroku credentials:
+Email: ************
+Password: ************
+Logged in as ************
+```
+
+3. heroku上にアプリを作成する。
+```
+$ heroku create
+Creating app... done, ⬢ XXXXX    // XXXXX はランダムな文字列が生成される。
+https://XXXXX.herokuapp.com/ | https://git.heroku.com/XXXXX.git
+
+$ git remote -v
+heroku	https://git.heroku.com/XXXXX.git (fetch)
+heroku	https://git.heroku.com/XXXXX.git (push)
+origin	git@github.com:giftee/intern-line-bot.git (fetch)
+origin	git@github.com:giftee/intern-line-bot.git (push)
+```
+
+4. herokuに資源をデプロイする。
+```
+$ git push heroku master
+```
+
+5. heroku上にアプリが公開されたか確認する。
+```
+$ heroku open
+```
+
+6. LINE Messaging APIにアクセスするためのシークレット情報を登録する。
+LINE developer コンソールのChannel基本設定から「Channel Secret」と「アクセストークン」を取得し、以下の通り設定する。
+```
+$ heroku config:set LINE_CHANNEL_SECRET=*****
+$ heroku config:set LINE_CHANNEL_TOKEN=*****
+```
+
+7. シークレット情報の変更をherokuに反映させる。
+```
+$ git push heroku master
+```
+
+# LINE Developerコンソールの設定
+LINE DeveloperコンソールのChannel基本設定から、以下を設定。
+
+- Webhook送信: 利用する
+- Webhook URL: https://XXXXX.herokuapp.com/callback
+- Botのグループトーク参加: 利用する
+- 自動応答メッセージ: 利用しない
+- 友だち追加時あいさつ: 利用する
+
+※Webhook URLの `https://XXXXX.herokuapp.com` には `heroku create` で生成されたURLを指定する。Webhook URLを設定した後に接続確認ボタンを押して成功したら疎通完了。
