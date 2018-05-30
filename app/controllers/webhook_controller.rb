@@ -1,4 +1,3 @@
-require 'sinatra'
 require 'line/bot'
 
 class WebhookController < ApplicationController
