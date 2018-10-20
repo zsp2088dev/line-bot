@@ -57,11 +57,6 @@ $ heroku config:set LINE_CHANNEL_SECRET=*****
 $ heroku config:set LINE_CHANNEL_TOKEN=*****
 ```
 
-7. シークレット情報の変更をherokuに反映させる。
-```
-$ git push heroku master
-```
-
 # LINE Developerコンソールの設定
 LINE DeveloperコンソールのChannel基本設定から、以下を設定。
 
