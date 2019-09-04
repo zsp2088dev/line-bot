@@ -4,10 +4,11 @@ require 'open-uri'
 require 'json'
 
 GNAVI_API_KEY = ENV['GNAVI_API_KEY']
+GNAVI_REST_SEARCH_BASE_URL = 'https://api.gnavi.co.jp/RestSearchAPI/v3'
 
 class GnaviRestSearchAPI
   def gnavi_rest_search(latitude, longitude)
-    url = 'https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=%s&category_l=RSFST18000&range=4&latitude=%s&longitude=%s&wifi=1' % [GNAVI_API_KEY, latitude, longitude]
+    url = '%s/?keyid=%s&category_l=RSFST18000&range=4&latitude=%s&longitude=%s&wifi=1' % [GNAVI_REST_SEARCH_BASE_URL, GNAVI_API_KEY, latitude, longitude]
     response = OpenURI.open_uri(url).read
     JSON.parse(response)
   end
