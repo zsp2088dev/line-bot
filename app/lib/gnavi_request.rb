@@ -25,8 +25,8 @@ class GnaviRequest
       return '近くにWiFiが利用できるカフェが見つかりませんでした。'
     end
 
-    cafe = messages.sample['name']
-    '近くのWiFiが利用できるカフェは【%s】' % cafe
+    cafe = messages.sample
+    "近くのWiFiが利用できるカフェ\n\n【%s】\n\n%s" % [cafe['name'], cafe['url_mobile']]
 
   end
 
