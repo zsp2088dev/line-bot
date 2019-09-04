@@ -27,7 +27,7 @@ class GnaviRequest
       end
     }
 
-    cafe = messages.sample
+    cafe = choice_best(messages)
     "近くのWiFiが利用できるカフェ\n\n【%s】\n\n%s" % [cafe['name'], cafe['url_mobile']]
 
   end
@@ -42,6 +42,19 @@ class GnaviRequest
       end
     }
     result
+  end
+
+  # 一番よいカフェを選ぶ
+  # スタバ以外は...
+  def choice_best(cafes)
+    cafes.each { |cafe|
+      if cafe['name_kana'].include?('スターバックスコーヒー')
+        return cafe
+      end
+    }
+
+    cafes.sample
+
   end
 
   # Level2ではWiFiの使えるカフェをここに追加
