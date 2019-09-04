@@ -20,7 +20,13 @@ class GnaviRequest
         messages.push(cafe)
       end
     }
-    messages[0]['name']
+
+    if messages.empty?
+      return '近くにWiFiが利用できるカフェが見つかりませんでした。'
+    end
+
+    cafe = messages.sample['name']
+    '近くのWiFiが利用できるカフェは【%s】' % cafe
 
   end
 
