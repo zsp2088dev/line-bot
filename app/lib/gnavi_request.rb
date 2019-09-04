@@ -9,8 +9,14 @@ GNAVI_REST_SEARCH_BASE_URL = 'https://api.gnavi.co.jp/RestSearchAPI/v3'
 class GnaviRequest
   def gnavi_rest_search(latitude, longitude)
     url = '%s/?keyid=%s&category_l=RSFST18000&range=2&latitude=%s&longitude=%s&hit_per_page=50' % [GNAVI_REST_SEARCH_BASE_URL, GNAVI_API_KEY, latitude, longitude]
-    response = OpenURI.open_uri(url).read
-    JSON.parse(response)
+
+    begin
+      response = OpenURI.open_uri(url).read
+      return JSON.parse(response)
+    rescue Exception
+      return false
+    end
+
   end
 
   def response_processing(hash)
@@ -20,10 +26,6 @@ class GnaviRequest
         messages.push(cafe)
       end
     }
-
-    if messages.empty?
-      return '近くにWiFiが利用できるカフェが見つかりませんでした。'
-    end
 
     cafe = messages.sample
     "近くのWiFiが利用できるカフェ\n\n【%s】\n\n%s" % [cafe['name'], cafe['url_mobile']]
@@ -44,11 +46,28 @@ class GnaviRequest
 
   # Level2ではWiFiの使えるカフェをここに追加
   def cafe_with_wifi_list
-    %w(スターバックスコーヒー ドトール プロント タリーズ マクドナルド ウエシマコーヒー ロッテリア フレッシュネス コメダコーヒー)
+    [
+        'スターバックスコーヒー',
+        'ドトール',
+        'プロント',
+        'タリーズ',
+        'マクドナルド',
+        'ウエシマコーヒー',
+        'ロッテリア',
+        'フレッシュネス',
+        'コメダコーヒー',
+        'ベローチェ',
+        'エクセルシオール',
+    ]
   end
 
 
   def cafe_with_wifi(latitude, longitude)
-    response_processing(gnavi_rest_search(latitude, longitude))
+    response = gnavi_rest_search(latitude, longitude)
+    if response
+      response_processing(response)
+    else
+      '近くにWiFiが利用できるカフェが見つかりませんでした。'
+    end
   end
 end
