@@ -23,3 +23,6 @@
 
 # RubyMine
 .idea/
+
+# .env
+.env
