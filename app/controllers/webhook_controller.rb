@@ -35,10 +35,10 @@ class WebhookController < ApplicationController
           tf.write(response.body)
 
         when Line::Bot::Event::MessageType::Location
-          api = GnaviRestSearchAPI.new
+          api = GnaviRequest.new
           message = {
               type: 'text',
-              text: api.cafe_with_wifi(event['latitude'], event['longitude'])
+              text: api.cafe_with_wifi(event['message']['latitude'], event['message']['longitude'])
           }
           client.reply_message(event['replyToken'], message)
         end
