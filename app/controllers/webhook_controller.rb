@@ -38,7 +38,11 @@ class WebhookController < ApplicationController
           api = GnaviRequest.new
           message = {
               type: 'text',
-              text: api.cafe_with_wifi(event['message']['latitude'], event['message']['longitude'])
+              text: api.cafe_with_wifi(
+                  event['source']['userId'],
+                  event['message']['latitude'],
+                  event['message']['longitude']
+              )
           }
           client.reply_message(event['replyToken'], message)
         end
