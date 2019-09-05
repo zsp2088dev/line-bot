@@ -4,7 +4,7 @@ class MessageParser
     if message[0] == '+'
 
     elsif message[0] == '-'
-
+      add_dislike_cafe(user_id, message[1..])
     elsif message == 'リスト'
       build_list_message(user_id)
     else
@@ -16,6 +16,15 @@ class MessageParser
     '送られてきたメッセージを解析できませんでした。'
   end
 
+  def add_dislike_cafe(user_id, cafe)
+    name_kana = Cafes.new.cafe_name_to_kana(cafe)
+    if name_kana
+      Dislike.where(user: user_id, cafe: cafe).first_or_create
+      "#{name_kana}を除外しました！"
+    else
+      unknown_message
+    end
+  end
 
   def build_list_message(user_id)
     msg = "リスト一覧です！\n\n"
