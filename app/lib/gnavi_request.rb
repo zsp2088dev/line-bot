@@ -36,14 +36,7 @@ class GnaviRequest
 
   # cafe_with_wifi_listに含まれるカフェかどうかをチェック
   def has_wifi(name_kana)
-    result = false
-    cafe_with_wifi_list.each { |cafe|
-      if name_kana.include?(cafe)
-        result = true
-        break
-      end
-    }
-    result
+    !cafe_with_wifi_list.map { |cafe| cafe if name_kana.include?(cafe) }.compact.empty?
   end
 
   # 一番よいカフェを選ぶ
