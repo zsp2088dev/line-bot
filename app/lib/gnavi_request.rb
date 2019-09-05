@@ -22,7 +22,7 @@ class GnaviRequest
   def response_processing(hash)
     messages = []
     hash['rest'].each { |cafe|
-      if compare_cafe(cafe['name_kana'], cafe_with_wifi_list)
+      if has_wifi(cafe['name_kana'])
         messages.push(cafe)
       end
     }
@@ -33,9 +33,9 @@ class GnaviRequest
   end
 
   # cafe_with_wifi_listに含まれるカフェかどうかをチェック
-  def compare_cafe(name_kana, list)
+  def has_wifi(name_kana)
     result = false
-    list.each { |cafe|
+    cafe_with_wifi_list.each { |cafe|
       if name_kana.include?(cafe)
         result = true
         break
