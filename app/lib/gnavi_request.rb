@@ -13,7 +13,9 @@ class GnaviRequest
     begin
       response = OpenURI.open_uri(url).read
       return JSON.parse(response)
-    rescue Exception
+
+    rescue OpenURI::HTTPError => e
+      Rails.logger.info(e)
       return false
     end
 
