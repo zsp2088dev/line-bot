@@ -19,8 +19,8 @@ class MessageParser
   def add_dislike_cafe(user_id, cafe)
     name_kana = Cafes.new.cafe_name_to_kana(cafe)
     if name_kana
-      Dislike.where(user: user_id, cafe: cafe).first_or_create
-      "#{name_kana}を除外しました！"
+      Dislike.where(user: user_id, cafe: name_kana).first_or_create
+      "#{Cafes.new.cafe_full_name(name_kana)}を除外しました！"
     else
       unknown_message
     end
@@ -29,8 +29,8 @@ class MessageParser
   def remove_dislike_cafe(user_id, cafe)
     name_kana = Cafes.new.cafe_name_to_kana(cafe)
     if name_kana
-      Dislike.find_by(user: user_id, cafe: cafe).try(:destroy)
-      "#{name_kana}を追加しました！"
+      Dislike.find_by(user: user_id, cafe: name_kana).try(:destroy)
+      "#{Cafes.new.cafe_full_name(name_kana)}を追加しました！"
     end
   end
 
