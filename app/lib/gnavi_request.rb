@@ -29,6 +29,11 @@ class GnaviRequest
       end
     }
 
+    # 近くにwifiの利用可能なcafeがにない場合の処理
+    if messages.empty?
+      return not_found_cafe
+    end
+
     cafe = choice_best(messages)
     "近くのWiFiが利用できるカフェ\n\n【%s】\n\n%s" % [cafe['name'], cafe['url_mobile']]
 
@@ -69,13 +74,17 @@ class GnaviRequest
     ]
   end
 
+  def not_found_cafe
+    '近くにWiFiが利用できるカフェが見つかりませんでした。'
+  end
+
 
   def cafe_with_wifi(latitude, longitude)
     response = gnavi_rest_search(latitude, longitude)
     if response
       response_processing(response)
     else
-      '近くにWiFiが利用できるカフェが見つかりませんでした。'
+      not_found_cafe
     end
   end
 end
