@@ -2,7 +2,7 @@ class MessageParser
   def build_message(user_id, message)
 
     if message[0] == '+'
-
+      remove_dislike_cafe(user_id, message[1..])
     elsif message[0] == '-'
       add_dislike_cafe(user_id, message[1..])
     elsif message == 'リスト'
@@ -23,6 +23,14 @@ class MessageParser
       "#{name_kana}を除外しました！"
     else
       unknown_message
+    end
+  end
+
+  def remove_dislike_cafe(user_id, cafe)
+    name_kana = Cafes.new.cafe_name_to_kana(cafe)
+    if name_kana
+      Dislike.find_by(user: user_id, cafe: cafe).try(:destroy)
+      "#{name_kana}を追加しました！"
     end
   end
 
