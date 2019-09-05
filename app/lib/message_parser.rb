@@ -1,5 +1,8 @@
 class MessageParser
   def build_message(user_id, message)
+    if message.length <= 2
+      return unknown_message
+    end
 
     if message[0] == '+'
       remove_dislike_cafe(user_id, message[1..])
