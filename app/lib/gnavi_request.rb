@@ -45,7 +45,7 @@ class GnaviRequest
 
   # cafe_with_wifi_listに含まれるカフェかどうかをチェック
   def has_wifi(name_kana)
-    !cafe_with_wifi_list.map { |cafe| cafe if name_kana.include?(cafe) }.compact.empty?
+    !Cafes.new.cafe_with_wifi_list.map { |cafe| cafe if name_kana.include?(cafe) }.compact.empty?
   end
 
   # 一番よいカフェを選ぶ
@@ -55,7 +55,7 @@ class GnaviRequest
     dislike_cafes = Dislike.where(user: user_id).map { |item| item.cafe }
 
     # 利用したいカフェ一覧
-    love_cafes = cafe_with_wifi_list - dislike_cafes
+    love_cafes = Cafes.new.cafe_with_wifi_list - dislike_cafes
 
     # 利用したくないカフェの除外処理
     result = []
@@ -74,23 +74,6 @@ class GnaviRequest
     end
 
     cafes.sample
-  end
-
-  # Level2ではWiFiの使えるカフェをここに追加
-  def cafe_with_wifi_list
-    [
-        'スターバックスコーヒー',
-        'ドトール',
-        'プロント',
-        'タリーズ',
-        'マクドナルド',
-        'ウエシマコーヒー',
-        'ロッテリア',
-        'フレッシュネス',
-        'コメダコーヒー',
-        'ベローチェ',
-        'エクセルシオール',
-    ]
   end
 
   def not_found_cafe
