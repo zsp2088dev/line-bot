@@ -20,7 +20,10 @@ module RubyGettingStarted
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    # ngrok
+    # dev env
     config.hosts << "zsp2088dev.ngrok.io"
+
+    # prod env
+    config.hosts << "giftee-line-bot-zsp2088dev.herokuapp.com"
   end
 end
