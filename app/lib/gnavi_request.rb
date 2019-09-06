@@ -73,7 +73,7 @@ class GnaviRequest
       nil
     end
 
-    cafes.sample
+    result.sample
   end
 
   def not_found_cafe
