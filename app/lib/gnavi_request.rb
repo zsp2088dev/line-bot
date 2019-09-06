@@ -21,7 +21,7 @@ class GnaviRequest
 
   end
 
-  def response_processing(hash)
+  def response_processing(user_id, hash)
     messages = []
     hash['rest'].each { |cafe|
       if has_wifi(cafe['name_kana'])
@@ -29,53 +29,64 @@ class GnaviRequest
       end
     }
 
-    cafe = choice_best(messages)
-    "近くのWiFiが利用できるカフェ\n\n【%s】\n\n%s" % [cafe['name'], cafe['url_mobile']]
+    # 近くにwifiの利用可能なcafeがにない場合の処理
+    if messages.empty?
+      return not_found_cafe
+    end
+
+    cafe = choice_best(user_id, messages)
+    if cafe
+      "近くのWiFiが利用できるカフェ\n\n【%s】\n\n%s" % [cafe['name'], cafe['url_mobile']]
+    else
+      not_found_cafe
+    end
 
   end
 
   # cafe_with_wifi_listに含まれるカフェかどうかをチェック
   def has_wifi(name_kana)
-    !cafe_with_wifi_list.map { |cafe| cafe if name_kana.include?(cafe) }.compact.empty?
+    !Cafes.new.cafe_with_wifi_list.map { |cafe| cafe if name_kana.include?(cafe) }.compact.empty?
   end
 
   # 一番よいカフェを選ぶ
-  # スタバ以外は...
-  def choice_best(cafes)
-    cafes.each { |cafe|
-      if cafe['name_kana'].include?('スターバックスコーヒー')
-        return cafe
+  # DBからデータを取得して利用したくないカフェは外す
+  def choice_best(user_id, cafes)
+    # 利用したくないカフェ一覧を取得
+    dislike_cafes = Dislike.where(user: user_id).map { |item| item.cafe }
+
+    # 利用したいカフェ一覧
+    love_cafes = Cafes.new.cafe_with_wifi_list - dislike_cafes
+
+    # 利用したくないカフェの除外処理
+    result = []
+    cafes.each do |cafe|
+      love_cafes.each do |love|
+        if cafe['name_kana'].include?(love)
+          result.push(cafe)
+          break
+        end
       end
-    }
+    end
 
-    cafes.sample
+    # 除外した結果、空の場合あり
+    if result.empty?
+      return nil
+    end
 
+    result.sample
   end
 
-  # Level2ではWiFiの使えるカフェをここに追加
-  def cafe_with_wifi_list
-    [
-        'スターバックスコーヒー',
-        'ドトール',
-        'プロント',
-        'タリーズ',
-        'マクドナルド',
-        'ウエシマコーヒー',
-        'ロッテリア',
-        'フレッシュネス',
-        'コメダコーヒー',
-        'ベローチェ',
-        'エクセルシオール',
-    ]
+  def not_found_cafe
+    '近くにWiFiが利用できるカフェが見つかりませんでした。'
   end
 
 
-  def cafe_with_wifi(latitude, longitude)
+  def cafe_with_wifi(user_id, latitude, longitude)
     response = gnavi_rest_search(latitude, longitude)
     if response
-      response_processing(response)
+      response_processing(user_id, response)
     else
-      '近くにWiFiが利用できるカフェが見つかりませんでした。'
+      not_found_cafe
     end
   end
 end

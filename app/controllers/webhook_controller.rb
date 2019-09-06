@@ -26,7 +26,7 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = {
               type: 'text',
-              text: event.message['text'] + '!!!!'
+              text: MessageParser.new.build_message(event['source']['userId'], event.message['text'])
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
@@ -38,7 +38,11 @@ class WebhookController < ApplicationController
           api = GnaviRequest.new
           message = {
               type: 'text',
-              text: api.cafe_with_wifi(event['message']['latitude'], event['message']['longitude'])
+              text: api.cafe_with_wifi(
+                  event['source']['userId'],
+                  event['message']['latitude'],
+                  event['message']['longitude']
+              )
           }
           client.reply_message(event['replyToken'], message)
         end

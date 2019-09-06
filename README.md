@@ -1,80 +1,37 @@
-# 前提
-- [Heroku](https://jp.heroku.com/) のアカウントを取得済みであること。
-- Herokuの[CLIツール](https://devcenter.heroku.com/articles/getting-started-with-ruby#set-up)がインストール済みであること。
-- [LINE Developer](https://developers.line.me/ja/) 登録が完了し、プロバイダー・channelの作成が完了していること。
+# Cafe with WiFi BOT
+> 最寄りのWiFiが使用できるカフェを提案してくれるLINE BOT
 
-# 環境
-```
-$ ruby -v
-ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-darwin16]
+![CafeWithWiFi](public/Logo.png)
 
-$ bundle exec rails -v
-Rails 5.1.4
-```
+## 動作環境
+- Ruby 2.6.4
+- Rails 6.0.0
 
-# Webhook環境の構築
-1. リポジトリをクローンする。
-```
-git clone git@github.com:giftee/intern-line-bot.git
-```
 
-2. Herokuにログインする。
-```
-$ heroku login
-heroku: Press any key to open up the browser to login or q to exit:
-```
+## 機能仕様
+LINEで位置情報を送信すると、最寄りのカフェの情報を教えてくれる。
+本アプリで検索できるカフェは15種類に絞ってある。
+また、利用したい / したくないカフェを登録することができ、利用したくないカフェに関しては除外検索できるようになっている。
 
-3. heroku上にアプリを作成する。
 ```
-$ heroku create
-Creating app... done, ⬢ XXXXX    // XXXXX はランダムな文字列が生成される。
-https://XXXXX.herokuapp.com/ | https://git.heroku.com/XXXXX.git
+// リスト一覧のメッセージ
+入力: 「リスト」
+出力: 「
++ スターバックス
++ ドトール
+- コメダ珈琲
+...
+」
 
-$ git remote -v
-heroku	https://git.heroku.com/XXXXX.git (fetch)
-heroku	https://git.heroku.com/XXXXX.git (push)
-origin	git@github.com:giftee/intern-line-bot.git (fetch)
-origin	git@github.com:giftee/intern-line-bot.git (push)
-```
+// 利用したいカフェの追加
+入力: 「+スタバ」
+出力: 「スターバックスを登録しました」
 
-4. herokuに資源をデプロイする。
-```
-$ git push heroku master
-```
+// 利用したくないカフェの追加
+入力: 「-ドトール」
+出力: 「ドトールを除外します」
 
-5. heroku上にアプリが公開されたか確認する。
+// 検索
+入力: 位置情報(LINE Messaging API 位置情報メッセージ)
+出力: 「おすすめのカフェはドトール！〜〜〜〜」(機能2と同じ)
 ```
-$ heroku open
-```
-
-6. LINE Messaging APIにアクセスするためのシークレット情報を登録する。
-LINE developer コンソールのChannel基本設定から「Channel Secret」と「アクセストークン」を取得し、以下の通り設定する。
-```
-$ heroku config:set LINE_CHANNEL_SECRET=*****
-$ heroku config:set LINE_CHANNEL_TOKEN=*****
-```
-
-# LINE Developerコンソールの設定
-LINE DeveloperコンソールのChannel基本設定から、以下を設定。
-
-- Webhook送信: 利用する
-- Webhook URL: https://XXXXX.herokuapp.com/callback
-- Botのグループトーク参加: 利用する
-- 自動応答メッセージ: 利用しない
-- 友だち追加時あいさつ: 利用する
-
-※Webhook URLの `https://XXXXX.herokuapp.com` には `heroku create` で生成されたURLを指定する。Webhook URLを設定した後に接続確認ボタンを押して成功したら疎通完了。
-
-# Q&A
-## Q. herokuのログが見たい
-```
-$ heroku logs --tail
-```
-
-## Q. masterブランチ以外をherokuにデプロイしたい
-```
-$ git push heroku feature/xxxxx:master -f
-```
-
-# 参考
-ローカル環境構築は[こちら](https://github.com/giftee/intern-line-bot/wiki/%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89)
