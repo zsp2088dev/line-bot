@@ -70,7 +70,7 @@ class GnaviRequest
 
     # 除外した結果、空の場合あり
     if result.empty?
-      nil
+      return nil
     end
 
     result.sample
